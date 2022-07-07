@@ -1,8 +1,6 @@
 import connection from '../models/connection';
 import ProductModel from '../models/productsModel';
 import { AddProduct, Product } from '../interfaces/product';
-// import HttpException from '../shared/http.exception';
-// import HttpStatusCode from '../shared/http.status.code';
 
 export default class ProductService {
   public model: ProductModel;

@@ -23,7 +23,6 @@ export default class ProductModel {
       [name, amount],
     );
     const [row] = result;
-    console.log(row);
     const { insertId: id } = row;
     return { id, ...product };
   } 
