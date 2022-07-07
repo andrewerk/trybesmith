@@ -1,6 +1,9 @@
-export interface Product {
-  id: number,
+export interface AddProduct {
   name: string,
-  amout: string,
-  orderId: number | null
+  amount: string,
+}
+
+export interface Product extends AddProduct {
+  id: number,
+  orderId?: number | null
 }
