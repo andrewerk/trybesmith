@@ -12,7 +12,7 @@ export default class OrdersModel {
     const result = await this.connection
       .execute(
         'SELECT * FROM Trybesmith.Orders as orders LEFT JOIN Trybesmith.Products as products'
-        + ' WHERE orders.id = products.orderId',
+        + ' ON orders.id = products.orderId',
       );
     const [rows] = result;
     return rows as Order[]; 
