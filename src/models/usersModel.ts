@@ -20,7 +20,6 @@ export default class UserModel {
     if (result.length === 0) {
       throw new HttpException(HttpStatusCode.UNAUTHORIZED, 'Username or password invalid');
     }
-    console.log(result);
     return result;
   }
 

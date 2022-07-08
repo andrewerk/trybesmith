@@ -1,7 +1,12 @@
 import { Request, Response } from 'express';
-import Jwt from 'jsonwebtoken';
+import { sign, SignOptions } from 'jsonwebtoken';
 import UserService from '../services/userService';
 import HttpStatusCode from '../shared/http.status.code';
+
+const jwtConfig: SignOptions = {
+  expiresIn: '40m',
+  algorithm: 'HS256',
+};
 
 const secret = 'jwtsecret';
 class UserController {
@@ -9,13 +14,10 @@ class UserController {
 
   public login = async (req: Request, res: Response) => {
     const { username, id } = await this.userService.login(req.body);
-    const token = Jwt.sign(
+    const token = sign(
       { data: { username, id } }, 
       secret,
-      {
-        expiresIn: '7d',
-        algorithm: 'HS256',
-      },
+      jwtConfig,
     );
     res.status(HttpStatusCode.OK).json({ token });
   };
@@ -23,13 +25,10 @@ class UserController {
   public create = async (req: Request, res: Response) => {
     const { username, id } = await this.userService.create(req.body);
 
-    const token = Jwt.sign(
+    const token = sign(
       { data: { username, id } }, 
       secret,
-      {
-        expiresIn: '7d',
-        algorithm: 'HS256',
-      },
+      jwtConfig,
     );
     res.status(HttpStatusCode.CREATED).json({ token });
   };

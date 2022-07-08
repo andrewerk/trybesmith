@@ -3,17 +3,16 @@ import Joi from 'joi';
 import HttpException from '../shared/http.exception';
 import HttpStatusCode from '../shared/http.status.code';
 
-const productDTO = Joi.object({
-  name: Joi.string().min(3).required(),
-  amount: Joi.string().min(3).required(),
+const orderDTO = Joi.object({
+  productsIds: Joi.array().items(Joi.number().required()).required(),
 }).messages({
   'any.required': '{{#label}} is required',
-  'any.string': '{{#label}} must be a string',
-  'string.min': '{{#label}} length must be at least {{#limit}} characters long',
+  'any.array': '{{#label}] must be an array',
+  'items.required': '"productsIds must include only numbers',
 });
 
-const addProductValidation = (req: Request, res: Response, next: NextFunction) => {
-  const { error } = productDTO.validate(req.body, { abortEarly: false });
+const orderValidation = (req: Request, res: Response, next: NextFunction) => {
+  const { error } = orderDTO.validate(req.body, { abortEarly: false });
   if (!error) {
     return next();
   }
@@ -23,4 +22,4 @@ const addProductValidation = (req: Request, res: Response, next: NextFunction) =
   throw new HttpException(HttpStatusCode[errorCode], messages[0]);
 };
 
-export default addProductValidation;
+export default orderValidation;

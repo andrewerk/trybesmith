@@ -12,7 +12,6 @@ const loginDTO = Joi.object({
 
 const loginValidation = (req: Request, res: Response, next: NextFunction) => {
   const { error } = loginDTO.validate(req.body, { abortEarly: false });
-  console.log(error);
   if (!error) {
     return next();
   }

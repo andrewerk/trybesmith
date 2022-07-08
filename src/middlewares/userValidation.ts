@@ -18,7 +18,6 @@ const userDTO = Joi.object({
 
 const addUserValidation = (req: Request, res: Response, next: NextFunction) => {
   const { error } = userDTO.validate(req.body, { abortEarly: false });
-  console.log(error);
   if (!error) {
     return next();
   }

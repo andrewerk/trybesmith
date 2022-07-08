@@ -9,6 +9,13 @@ class OrdersController {
     const orders = await this.productService.getAll();
     res.status(HttpStatusCode.OK).json(orders);
   };
+
+  public addOrder = async (req: Request, res: Response) => {
+    const { id } = res.locals.user.data;
+    console.log(id);
+    const order = await this.productService.addOrder(req.body, id);
+    res.status(HttpStatusCode.CREATED).json(order);
+  };
 }
 
 export default OrdersController;
