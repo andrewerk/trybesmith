@@ -1,5 +1,5 @@
 export interface AddOrder {
-  productsIds: number[],
+  productsIds?: number[],
 }
 
 export interface Order extends AddOrder {

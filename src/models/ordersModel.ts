@@ -1,5 +1,10 @@
-import { Pool } from 'mysql2/promise';
+import { OkPacket, Pool } from 'mysql2/promise';
 import { Order } from '../interfaces/order';
+
+type Product = {
+  id: number,
+  orderId: number
+};
 
 export default class OrdersModel {
   public connection: Pool;
@@ -9,12 +14,18 @@ export default class OrdersModel {
   }
 
   public async getAll(): Promise<Order[]> {
-    const result = await this.connection
-      .execute(
-        'SELECT * FROM Trybesmith.Orders as orders LEFT JOIN Trybesmith.Products as products'
-        + ' ON orders.id = products.orderId',
-      );
-    const [rows] = result;
-    return rows as Order[]; 
+    const [rawOrders] = await this.connection
+      .execute<OkPacket[] & Order[]>('SELECT id, userId FROM Trybesmith.Orders');
+    const [products] = await this.connection
+      .execute<OkPacket[] & Product[]>('SELECT id, orderId FROM Trybesmith.Products');
+    const orders = rawOrders.map((rawOrder: Order) => {
+      const productsArray: number[] = [];
+      products.forEach((product: Product) => {
+        if (product.orderId === rawOrder.id) productsArray.push(product.id);
+      }); 
+      return { ...rawOrder, productsIds: productsArray };
+    });
+
+    return orders as Order[]; 
   }
 }
