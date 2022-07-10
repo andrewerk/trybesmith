@@ -5,7 +5,7 @@ import HttpStatusCode from '../shared/http.status.code';
 
 const secret = 'jwtsecret';
 
-const verifyToken = async (token: string | undefined): Promise<string | JwtPayload> => {
+const verifyToken = (token: string | undefined): JwtPayload | string => {
   if (!token) {
     throw new HttpException(HttpStatusCode.UNAUTHORIZED, 'Token not found');
   }
@@ -17,9 +17,9 @@ const verifyToken = async (token: string | undefined): Promise<string | JwtPaylo
   }
 };
 
-const validateToken = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization;
-  const payload = await verifyToken(token);
+const validateToken = (req: Request, res: Response, next: NextFunction) => {
+  const token = req.headers.authorization as string || undefined;
+  const payload = verifyToken(token);
   res.locals.user = payload;
   next();
 };

@@ -10,7 +10,7 @@ export default class UserService {
     this.model = new UserModel(connection);
   }
 
-  public async login(userLogin: Login) {
+  public async login(userLogin: Login): Promise<User> {
     const result = await this.model.login(userLogin);
     return result;
   }

@@ -13,21 +13,21 @@ export default class OrdersModel {
     this.connection = connection;
   }
 
-  public async addOrder(order: number[], userId: number): Promise<Order> {
+  public async addOrder(order: number[], id: number): Promise<Order> {
     const [row] = await this.connection
       .execute<ResultSetHeader>(
       'INSERT INTO Trybesmith.Orders (userId) VALUES (?)',
-      [userId],
+      [id],
     );
     const { insertId } = row;
-    order.forEach(async (id: number) => {
+    order.forEach(async (productId: number) => {
       await this.connection
         .execute(
           'UPDATE Trybesmith.Products SET orderId = ? WHERE id = ?',
-          [insertId, id],
+          [insertId, productId],
         );
     });
-    return { userId, productsIds: order };
+    return { userId: id, productsIds: order };
   }
 
   public async getAll(): Promise<Order[]> {

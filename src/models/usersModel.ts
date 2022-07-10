@@ -20,7 +20,7 @@ export default class UserModel {
     if (result.length === 0) {
       throw new HttpException(HttpStatusCode.UNAUTHORIZED, 'Username or password invalid');
     }
-    return result;
+    return JSON.parse(JSON.stringify(result))[0];
   }
 
   public async create(user: AddUser): Promise<User> {

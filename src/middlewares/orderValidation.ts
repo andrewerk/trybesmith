@@ -4,11 +4,11 @@ import HttpException from '../shared/http.exception';
 import HttpStatusCode from '../shared/http.status.code';
 
 const orderDTO = Joi.object({
-  productsIds: Joi.array().items(Joi.number().required()).required(),
+  productsIds: Joi.array().items(Joi.number()).min(1).required(),
 }).messages({
   'any.required': '{{#label}} is required',
   'any.array': '{{#label}] must be an array',
-  'items.required': '"productsIds must include only numbers',
+  'array.min': '{{#label}} must include only numbers',
 });
 
 const orderValidation = (req: Request, res: Response, next: NextFunction) => {
