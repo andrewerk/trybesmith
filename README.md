@@ -1,6 +1,6 @@
-# Welcome to the Blogs API Project Repository!
+# Welcome to the Trybesmith Project Repository!
 
-This individual project was developed within Trybe Course. The main goal was to build a CRUD RESTful API for a blog back-end. With this application, you can add new users, login and receive a authentication token for other requests. 
+This individual project was developed within Trybe Course. The main goal was to build a CRUD RESTful API in TypeScript for a MMROPG shop back-end. With this application, you can add new users, login and receive a authentication token for other requests, add new products and new orders.
 
 ## Read the docs and deploy URL
 
@@ -12,11 +12,11 @@ This API is fully documented with OpenAPI Specification in the url:
 
 To run this application locally, you will need to clone this repository with:
 
-```git clone git@github.com:andrewerk/blogs-api.git```
+```git clone git@github.com:andrewerk/trybesmith.git```
 
 Then, just go to the project root with:
 
-```cd blogs-api```
+```cd trybesmith```
 
 Finally, build the containers to run the API with docker-compose:
 
@@ -29,4 +29,4 @@ If the images created for this application are removed, when rebuilding the Data
 
 ## Skills developed during this Project
 
-During this project, we had to apply new knowledge about software backend architecture, especially about MSC (Model - Service - Controller), REST constraints to build a RESTful API, reinforce Node.js and Express concepts, Sequelize ORM and JWT Authentication.
+During this project, we had to apply new knowledge about TypeScript, software backend architecture, especially about MSC (Model - Service - Controller), REST constraints to build a RESTful API, reinforce Node.js and Express concepts, and JWT Authentication. 
