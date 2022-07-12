@@ -1,0 +1,660 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Blogs API",
+        "description": "RESTful API developed within Trybe Course with Express and Sequelize, to be a Blog back-end",
+        "contact": {
+            "email": "andrewerk1804@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/user": {
+            "post": {
+                "summary": "Create user",
+                "description": "Create new user to the blog, with permissions to send, edit and delete its own posts",
+                "tags": ["user"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/createUserBody"
+                            },
+                            "examples": {
+                                "UserData": {
+                                    "summary": "user",
+                                    "value": {
+                                        "displayName": "Your Name with at least 8 characters",
+                                        "email": "user@email.com",
+                                        "password": "password with at least 6 characters",
+                                        "image": "Your image url"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                      "description": "Some required fields are missing or invalid fields"
+                    },
+                    "409": {
+                        "description": "User already registered"
+                      },
+                    "200": {
+                      "description": "User succesfully created",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/token"
+                          }
+                        }
+                      }
+                    }  
+                }
+            },
+            "get": {
+                "summary": "List all users",
+                "description": "Endpoint to list all users. Token required in authorization header",
+                "security": [
+                  {
+                  "jwt": []
+                }
+              ],
+                "tags": ["user"],
+                "responses": {
+                    "200": {
+                      "description": "OK",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/users"
+                          }
+                        }       
+                      }
+                    }
+                  }  
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "summary": "Log into API and retrieve token",
+                "description": "Send email address and password after creating account to retrieve token for further requests",
+                "tags": ["login"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/loginBody"
+                            },
+                            "examples": {
+                                "UserData": {
+                                    "summary": "user",
+                                    "value": {
+                                        "email": "user@email.com",
+                                        "password": "password"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                      "description": "Some required fields are missing or invalid fields"
+                    },
+                    "200": {
+                      "description": "Login succesfully",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "$ref": "#/components/schemas/token"
+                          }
+                        }
+                      }
+                    }  
+                }
+            }
+        },
+        "/user/{id}": {
+          "get": {
+              "summary": "Recieves info about an user",
+              "description": "Given a userId, recieves information about this user",
+              "tags": ["user"],
+              "security": [
+                {
+                "jwt": []
+              }
+            ],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "description": "User id",
+                "required": true
+              }
+            ],
+              "responses": {
+                  "404": {
+                    "description": "User does not exist"
+                  },
+                  "200": {
+                    "description": "User found",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/users"
+                        }
+                      }
+                    }
+                  }  
+              }
+          }
+      },
+      "/user/me": {
+        "delete": {
+            "summary": "Delete current user",
+            "description": "Given a authenticated request to this endpoint, delete the user according to token payload",
+            "tags": ["user"],
+            "security": [
+              {
+              "jwt": []
+            }
+          ],
+            "responses": {
+                "204": {
+                  "description": "User deleted"
+                }  
+            }
+        }
+      },
+      "/categories": {
+        "post": {
+            "summary": "Add new category",
+            "description": "Add new category to categories list ",
+            "tags": ["category"],
+            "security": [
+              {
+              "jwt": []
+            }
+            ],
+            "requestBody": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/category"
+                        },
+                        "examples": {
+                            "UserData": {
+                                "summary": "user",
+                                "value": {
+                                    "name": "CategoryName"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "400": {
+                  "description": "Name is required"
+                },
+                "201": {
+                  "description": "Category added succesfully",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/categoryAdded"
+                      }
+                    }
+                  }
+                }  
+            }
+        },
+        "get": {
+          "summary": "Get categories",
+          "description": "List all categories on the blog",
+          "tags": ["category"],
+          "security": [
+            {
+            "jwt": []
+          }
+          ],
+          "responses": {
+              "200": {
+                "description": "Categories list",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/categoryAdded"
+                    }
+                  }  
+                }
+              }
+            }  
+          }
+        }
+      },
+      "/post": {
+        "post": {
+            "summary": "Add new post to blog",
+            "description": "Add new post according to request body",
+            "tags": ["post"],
+            "security": [
+              {
+              "jwt": []
+            }
+          ],
+            "requestBody": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/AddPostBody"
+                        },
+                        "examples": {
+                            "UserData": {
+                                "summary": "user",
+                                "value": {
+                                    "title": "Post title",
+                                    "content": "Post content",
+                                    "categoryIds": [1,2]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "400": {
+                  "description": "Some required fields are missing or category does not exist"
+                },
+                "201": {
+                  "description": "Post succesfully added",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/postAdded"
+                      }
+                    }
+                  }
+                }  
+            }
+        },
+        "get": {
+            "summary": "List all posts",
+            "description": "Endpoint to list all posts in the blog",
+            "security": [
+              {
+              "jwt": []
+            }
+          ],
+            "tags": ["post"],
+            "responses": {
+                "200": {
+                  "description": "OK",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/postList"
+                      }
+                    }       
+                  }
+                }
+              }  
+            }
+        }
+      },
+      "/post/{id}": {
+        "get": {
+            "summary": "Get post by id",
+            "description": "Given id in request parameter, return post",
+            "security": [
+              {
+              "jwt": []
+            }
+          ],
+            "tags": ["post"],
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "description": "Post id",
+                "required": true
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/postList"
+                  }       
+                }
+              }
+            }  
+          }
+        },
+        "put": {
+          "summary": "Edit post by id",
+          "description": "Given id in request parameter, edit and return edited post",
+          "security": [
+            {
+            "jwt": []
+          }
+        ],
+          "tags": ["post"],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "Post id",
+              "required": true
+            }
+          ],
+          "requestBody": {
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/editPost"
+                    },
+                    "examples": {
+                        "UserData": {
+                            "summary": "user",
+                            "value": {
+                                "title": "Post new title",
+                                "content": "Post new content"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                      "$ref": "#/components/schemas/postList"
+                  }       
+                }
+              }
+            }  
+          }
+        },
+        "delete": {
+          "summary": "Delete post by id",
+          "description": "Given id in request parameter, delete post. Only the psot owner can delete it, being the user recovered by the token payload",
+          "security": [
+            {
+            "jwt": []
+          }
+        ],
+          "tags": ["post"],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "Post id",
+              "required": true
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Post deleted"
+            },
+            "401": {
+              "description": "Unauthorized user"
+            },
+            "404": {
+              "description": "Post does not exist"
+            }  
+          }
+        }
+      },
+      "/post/search?q={searchText}": {
+        "get": {
+          "summary": "Search post by title or content",
+          "description": "Search post by title or content given request query",
+          "security": [
+            {
+            "jwt": []
+          }
+        ],
+          "tags": ["post"],
+          "parameters": [
+            {
+              "name": "searchText",
+              "in": "path",
+              "description": "Search by title or conent",
+              "required": true
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/postList"
+                    }
+                  }      
+                }
+              }
+            }  
+          }
+        }
+      }
+    },    
+    "components": {
+        "schemas": {
+            "createUserBody": {
+                "type": "object",
+                "properties": {
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "image": {
+                        "type": "string"
+                    }
+                }
+            },
+            "users": {
+              "type": "object",
+              "properties": {
+                  "id": {
+                      "type": "number"
+                  },
+                  "displayName": {
+                    "type": "string"
+                  },
+                  "email": {
+                      "type": "string"
+                  },
+                  "image": {
+                      "type": "string"
+                  }
+              }
+          },
+            "loginBody": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AddPostBody": {
+              "type": "object",
+              "properties": {
+                  "title": {
+                      "type": "string"
+                  },
+                  "content": {
+                      "type": "string"
+                  },
+                  "categoryIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                  }
+                }
+              }
+          },
+          "editPost": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
+          "postAdded": {
+            "type": "object",
+            "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "userId": {
+                  "type": "number"
+                },
+                "updated": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                }
+            }
+          },
+          "postList": {
+            "type": "object",
+            "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "userId": {
+                  "type": "number"
+                },
+                "updated": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "image": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+            "token": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string"
+                    }
+                }
+            },
+            "category": {
+              "type": "object",
+              "properties": {
+                  "name": {
+                      "type": "string"
+                  }
+              }
+            },
+            "categoryAdded": {
+              "type": "object",
+              "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+              }
+          },
+            "invalidToken": {
+              "type": "object",
+              "properties": {
+                  "message": {
+                      "type": "string"
+                  }
+              }
+          }
+        },
+        "responses": {
+          "Unauthorized": {
+            "description": "Expired or invalid token or Token not found"
+          }
+        },
+        "securitySchemes": {
+          "jwt": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "authorization"
+          }
+        }
+    }
+}
