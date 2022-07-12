@@ -18,6 +18,8 @@ Then, just go to the project root with:
 
 ```cd trybesmith```
 
+Once you are at the project root directory, set the .env file correctly (just remove .example, without changing its content).
+
 Finally, build the containers to run the API with docker-compose:
 
 ```docker-compose up -d```
